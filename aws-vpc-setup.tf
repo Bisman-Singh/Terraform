@@ -112,9 +112,9 @@ resource "aws_db_instance" "db" {
   engine            = "mysql"
   instance_class    = "db.t3.micro"
   allocated_storage = 20
-  name              = "mydb"
+  db_name           = "mydb"             # Use db_name instead of name
   username          = "admin"
-  password          = "password" # Change to a secure password
+  password          = "password"         # Change to a secure password
   db_subnet_group_name = aws_db_subnet_group.main.name
   vpc_security_group_ids = [aws_security_group.web.id]
   skip_final_snapshot = true
