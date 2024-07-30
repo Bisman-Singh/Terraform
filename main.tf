@@ -6,7 +6,7 @@ provider "aws" {
 resource "aws_vpc" "main" {
   cidr_block = var.vpc_cidr
   tags = {
-    Name = "E-Commerce VPC"
+    Name = "my-vpc"
   }
 }
 
@@ -44,7 +44,7 @@ resource "aws_internet_gateway" "main" {
 
 # Create a NAT Gateway
 resource "aws_eip" "nat" {
-  vpc = true
+  domain = "vpc"  # Use domain attribute instead of vpc
 }
 
 resource "aws_nat_gateway" "main" {
