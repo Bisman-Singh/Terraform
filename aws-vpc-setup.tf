@@ -134,8 +134,8 @@ resource "aws_db_subnet_group" "main" {
 
 # S3 Bucket
 resource "aws_s3_bucket" "my_bucket" {
-  bucket = "my-unique-bucket-name" # Ensure this name is unique globally
+  bucket = "bisman" # Ensure this name is unique globally
   tags = {
-    Name = "my_bucket"
+    Name = "Bisman"
   }
 }
