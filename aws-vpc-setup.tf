@@ -1,9 +1,9 @@
 provider "aws" {
-  region = "us-west-2"  # Replace with your region
+  region = "us-west-2"  # Replace with your desired AWS region
 }
 
 resource "aws_vpc" "main" {
-  cidr_block = "10.0.0.0/16"
+  cidr_block = "10.0.0.0/16"  # Replace with your desired VPC CIDR block
   enable_dns_support = true
   enable_dns_hostnames = true
   tags = {
@@ -13,8 +13,8 @@ resource "aws_vpc" "main" {
 
 resource "aws_subnet" "public" {
   vpc_id            = aws_vpc.main.id
-  cidr_block        = "10.0.1.0/24"
-  availability_zone = "us-west-2a"
+  cidr_block        = "10.0.1.0/24"  # Replace with your desired public subnet CIDR block
+  availability_zone = "us-west-2a"  # Replace with your desired availability zone
   map_public_ip_on_launch = true
   tags = {
     Name = "PublicSubnet"
@@ -23,8 +23,8 @@ resource "aws_subnet" "public" {
 
 resource "aws_subnet" "private" {
   vpc_id            = aws_vpc.main.id
-  cidr_block        = "10.0.2.0/24"
-  availability_zone = "us-west-2a"
+  cidr_block        = "10.0.2.0/24"  # Replace with your desired private subnet CIDR block
+  availability_zone = "us-west-2a"  # Replace with your desired availability zone
   tags = {
     Name = "PrivateSubnet"
   }
@@ -34,6 +34,12 @@ resource "aws_internet_gateway" "igw" {
   vpc_id = aws_vpc.main.id
   tags = {
     Name = "MyInternetGateway"
+  }
+}
+
+resource "aws_eip" "nat" {
+  tags = {
+    Name = "MyEIP"
   }
 }
 
@@ -123,8 +129,8 @@ resource "aws_security_group" "backend_sg" {
   }
 
   ingress {
-    from_port   = 5432
-    to_port     = 5432
+    from_port   = 5432  # Replace with the port for backend access
+    to_port     = 5432  # Replace with the port for backend access
     protocol    = "tcp"
     security_groups = [aws_security_group.instance_sg.id]
   }
@@ -138,7 +144,7 @@ resource "aws_security_group" "backend_sg" {
 }
 
 resource "aws_instance" "web" {
-  ami           = "ami-0c55b159cbfafe1f0"  # Example AMI ID
+  ami           = "ami-0c55b159cbfafe1f0"  # Replace with a valid AMI ID for your region
   instance_type = "t2.micro"
   subnet_id     = aws_subnet.public.id
   security_groups = [aws_security_group.instance_sg.name]
