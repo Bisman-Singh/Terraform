@@ -1,10 +1,10 @@
 provider "aws" {
-  region = "<YOUR_AWS_REGION>"  # AWS region
+  region = "us-west-2"  # Replace with your AWS region
 }
 
 # Create a new VPC
 resource "aws_vpc" "main" {
-  cidr_block = "<VPC_CIDR_BLOCK>"  # CIDR block for VPC
+  cidr_block = "10.0.0.0/16"  # Example CIDR block
   enable_dns_support = true
   enable_dns_hostnames = true
   tags = {
@@ -15,8 +15,8 @@ resource "aws_vpc" "main" {
 # Create a public subnet
 resource "aws_subnet" "public" {
   vpc_id            = aws_vpc.main.id
-  cidr_block        = "<PUBLIC_SUBNET_CIDR_BLOCK>"  # CIDR block for public subnet
-  availability_zone = "<AVAILABILITY_ZONE>"  # Preferred AZ
+  cidr_block        = "10.0.1.0/24"  # Example CIDR block
+  availability_zone = "us-west-2a"  # Example AZ
   map_public_ip_on_launch = true
   tags = {
     Name = "PublicSubnet"
@@ -26,8 +26,8 @@ resource "aws_subnet" "public" {
 # Create a private subnet
 resource "aws_subnet" "private" {
   vpc_id            = aws_vpc.main.id
-  cidr_block        = "<PRIVATE_SUBNET_CIDR_BLOCK>"  # CIDR block for private subnet
-  availability_zone = "<AVAILABILITY_ZONE>"  # Preferred AZ
+  cidr_block        = "10.0.2.0/24"  # Example CIDR block
+  availability_zone = "us-west-2a"  # Example AZ
   tags = {
     Name = "PrivateSubnet"
   }
@@ -102,22 +102,22 @@ resource "aws_security_group" "instance_sg" {
   }
 
   ingress {
-    from_port   = var.http_port
-    to_port     = var.http_port
+    from_port   = 80
+    to_port     = 80
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
 
   ingress {
-    from_port   = var.https_port
-    to_port     = var.https_port
+    from_port   = 443
+    to_port     = 443
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
 
   ingress {
-    from_port   = var.ssh_port
-    to_port     = var.ssh_port
+    from_port   = 22
+    to_port     = 22
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
@@ -138,8 +138,8 @@ resource "aws_security_group" "backend_sg" {
   }
 
   ingress {
-    from_port   = var.backend_port
-    to_port     = var.backend_port
+    from_port   = 5432
+    to_port     = 5432
     protocol    = "tcp"
     security_groups = [aws_security_group.instance_sg.id]
   }
@@ -154,8 +154,8 @@ resource "aws_security_group" "backend_sg" {
 
 # Launch an EC2 instance in the public subnet
 resource "aws_instance" "web" {
-  ami           = "<AMI_ID>"  # AMI ID
-  instance_type = "<INSTANCE_TYPE>"  # The instance type
+  ami           = "ami-12345678"  # Replace with a valid AMI ID
+  instance_type = "t2.micro"  # Example instance type
   subnet_id     = aws_subnet.public.id
   security_groups = [aws_security_group.instance_sg.name]
   tags = {
@@ -163,36 +163,5 @@ resource "aws_instance" "web" {
   }
 
   # Optional: If you want to use key pair for SSH
-  key_name = var.key_name
-}
-
-# Variables
-variable "http_port" {
-  description = "Port for HTTP traffic"
-  type        = number
-  default     = 80
-}
-
-variable "https_port" {
-  description = "Port for HTTPS traffic"
-  type        = number
-  default     = 443
-}
-
-variable "ssh_port" {
-  description = "Port for SSH traffic"
-  type        = number
-  default     = 22
-}
-
-variable "backend_port" {
-  description = "Port for backend services"
-  type        = number
-  default     = 5432  # Example
-}
-
-variable "key_name" {
-  description = "Name of the SSH key pair"
-  type        = string
-  default     = ""  # SSH key pair name
+  key_name = "my-ssh-key"  # Replace with your SSH key pair name
 }
