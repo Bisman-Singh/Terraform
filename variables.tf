@@ -29,15 +29,15 @@ variable "instance_type_db" {
 }
 
 variable "key_name" {
-  description = "The name of the SSH key pair."
+  description = "E-Commerce"
 }
 
 variable "web_ami_id" {
-  description = "The AMI ID for the web server instance."
+  description = "ami-0a0e5d9c7acc336f1"
 }
 
 variable "db_ami_id" {
-  description = "The AMI ID for the database server instance."
+  description = "ami-0a0e5d9c7acc336f1"
 }
 
 variable "web_server_name" {
