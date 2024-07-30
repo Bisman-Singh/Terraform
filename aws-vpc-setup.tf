@@ -1,10 +1,10 @@
 provider "aws" {
-  region = "us-west-2"  # Replace with your AWS region
+  region = "us-west-2"  # AWS region
 }
 
 # Create a new VPC
 resource "aws_vpc" "main" {
-  cidr_block = "10.0.0.0/16"  # Example CIDR block
+  cidr_block = "10.0.0.0/16"  # CIDR block for VPC
   enable_dns_support = true
   enable_dns_hostnames = true
   tags = {
@@ -15,8 +15,8 @@ resource "aws_vpc" "main" {
 # Create a public subnet
 resource "aws_subnet" "public" {
   vpc_id            = aws_vpc.main.id
-  cidr_block        = "10.0.1.0/24"  # Example CIDR block
-  availability_zone = "us-west-2a"  # Example AZ
+  cidr_block        = "10.0.1.0/24"  # CIDR block for public subnet
+  availability_zone = "us-west-2a"  # Availability Zone
   map_public_ip_on_launch = true
   tags = {
     Name = "PublicSubnet"
@@ -26,8 +26,8 @@ resource "aws_subnet" "public" {
 # Create a private subnet
 resource "aws_subnet" "private" {
   vpc_id            = aws_vpc.main.id
-  cidr_block        = "10.0.2.0/24"  # Example CIDR block
-  availability_zone = "us-west-2a"  # Example AZ
+  cidr_block        = "10.0.2.0/24"  # CIDR block for private subnet
+  availability_zone = "us-west-2a"  # Availability Zone
   tags = {
     Name = "PrivateSubnet"
   }
@@ -154,7 +154,7 @@ resource "aws_security_group" "backend_sg" {
 
 # Launch an EC2 instance in the public subnet
 resource "aws_instance" "web" {
-  ami           = "ami-12345678"  # Replace with a valid AMI ID
+  ami           = "ami-0c55b159cbfafe1f0"  # Example AMI ID
   instance_type = "t2.micro"  # Example instance type
   subnet_id     = aws_subnet.public.id
   security_groups = [aws_security_group.instance_sg.name]
