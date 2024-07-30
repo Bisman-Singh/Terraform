@@ -1,10 +1,9 @@
 provider "aws" {
-  region = "us-west-2"  # AWS region
+  region = "us-west-2"  # Replace with your region
 }
 
-# Create a new VPC
 resource "aws_vpc" "main" {
-  cidr_block = "10.0.0.0/16"  # CIDR block for VPC
+  cidr_block = "10.0.0.0/16"
   enable_dns_support = true
   enable_dns_hostnames = true
   tags = {
@@ -12,38 +11,30 @@ resource "aws_vpc" "main" {
   }
 }
 
-# Create a public subnet
 resource "aws_subnet" "public" {
   vpc_id            = aws_vpc.main.id
-  cidr_block        = "10.0.1.0/24"  # CIDR block for public subnet
-  availability_zone = "us-west-2a"  # Availability Zone
+  cidr_block        = "10.0.1.0/24"
+  availability_zone = "us-west-2a"
   map_public_ip_on_launch = true
   tags = {
     Name = "PublicSubnet"
   }
 }
 
-# Create a private subnet
 resource "aws_subnet" "private" {
   vpc_id            = aws_vpc.main.id
-  cidr_block        = "10.0.2.0/24"  # CIDR block for private subnet
-  availability_zone = "us-west-2a"  # Availability Zone
+  cidr_block        = "10.0.2.0/24"
+  availability_zone = "us-west-2a"
   tags = {
     Name = "PrivateSubnet"
   }
 }
 
-# Create an internet gateway
 resource "aws_internet_gateway" "igw" {
   vpc_id = aws_vpc.main.id
   tags = {
     Name = "MyInternetGateway"
   }
-}
-
-# Create a NAT gateway
-resource "aws_eip" "nat" {
-  depends_on = [aws_internet_gateway.igw]
 }
 
 resource "aws_nat_gateway" "nat" {
@@ -54,7 +45,6 @@ resource "aws_nat_gateway" "nat" {
   }
 }
 
-# Create route table for public subnet
 resource "aws_route_table" "public" {
   vpc_id = aws_vpc.main.id
 
@@ -68,7 +58,6 @@ resource "aws_route_table" "public" {
   }
 }
 
-# Create route table for private subnet
 resource "aws_route_table" "private" {
   vpc_id = aws_vpc.main.id
 
@@ -82,19 +71,16 @@ resource "aws_route_table" "private" {
   }
 }
 
-# Associate public subnet with public route table
 resource "aws_route_table_association" "public" {
   subnet_id      = aws_subnet.public.id
   route_table_id = aws_route_table.public.id
 }
 
-# Associate private subnet with private route table
 resource "aws_route_table_association" "private" {
   subnet_id      = aws_subnet.private.id
   route_table_id = aws_route_table.private.id
 }
 
-# Create a security group for the instance
 resource "aws_security_group" "instance_sg" {
   vpc_id = aws_vpc.main.id
   tags = {
@@ -130,7 +116,6 @@ resource "aws_security_group" "instance_sg" {
   }
 }
 
-# Create a security group for backend services
 resource "aws_security_group" "backend_sg" {
   vpc_id = aws_vpc.main.id
   tags = {
@@ -152,16 +137,14 @@ resource "aws_security_group" "backend_sg" {
   }
 }
 
-# Launch an EC2 instance in the public subnet
 resource "aws_instance" "web" {
   ami           = "ami-0c55b159cbfafe1f0"  # Example AMI ID
-  instance_type = "t2.micro"  # Example instance type
+  instance_type = "t2.micro"
   subnet_id     = aws_subnet.public.id
   security_groups = [aws_security_group.instance_sg.name]
   tags = {
     Name = "MyWebInstance"
   }
 
-  # Optional: If you want to use key pair for SSH
   key_name = "my-ssh-key"  # Replace with your SSH key pair name
 }
