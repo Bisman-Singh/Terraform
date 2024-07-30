@@ -42,11 +42,12 @@ resource "aws_internet_gateway" "main" {
   }
 }
 
-# Create a NAT Gateway
+# Allocate an Elastic IP for the NAT Gateway
 resource "aws_eip" "nat" {
-  domain = "vpc"  # Use domain attribute instead of vpc
+  domain = "vpc"
 }
 
+# Create a NAT Gateway
 resource "aws_nat_gateway" "main" {
   allocation_id = aws_eip.nat.id
   subnet_id     = aws_subnet.public.id
@@ -162,7 +163,7 @@ resource "aws_instance" "web" {
   instance_type = var.instance_type_web
   key_name      = var.key_name
   subnet_id     = aws_subnet.public.id
-  security_groups = [aws_security_group.web_sg.name]
+  vpc_security_group_ids = [aws_security_group.web_sg.id]
 
   tags = {
     Name = var.web_server_name
@@ -173,8 +174,9 @@ resource "aws_instance" "web" {
   }
 }
 
-# Allocate an Elastic IP for the web server and associate it
+# Allocate an Elastic IP for the web server
 resource "aws_eip" "web_eip" {
+  domain = "vpc"
   instance = aws_instance.web.id
 }
 
@@ -184,7 +186,7 @@ resource "aws_instance" "db" {
   instance_type = var.instance_type_db
   key_name      = var.key_name
   subnet_id     = aws_subnet.private.id
-  security_groups = [aws_security_group.db_sg.name]
+  vpc_security_group_ids = [aws_security_group.db_sg.id]
 
   tags = {
     Name = var.db_server_name
